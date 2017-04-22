@@ -1,0 +1,32 @@
+#add-item-to-table:hover{
+  cursor: pointer;
+  color: lightgreen;
+ }
+
+.custom-header{
+  background-color: #333333;
+  color: white;
+  padding-bottom: 10px;
+  margin-bottom: 50px;
+}
+
+.custom-header .create{
+  padding-top: 25px;
+}
+
+.glyphicon-plus{
+  color: limegreen;
+}
+
+.hide-table-item{
+  display: none;
+}
+
+footer{
+  background:#333333;
+  color:#ffffff;
+  text-align:center;
+  padding:30px;
+  margin-top:100px;
+}
+

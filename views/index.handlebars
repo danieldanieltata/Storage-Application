@@ -1,0 +1,63 @@
+<header class="custom-header">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10">
+                <h1><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Ofek Lan Storage <small>Manage Your Storage</small></h1>
+            </div>
+            <div class="col-md-2 create">
+                <button class="btn btn-primary">I Took Item</button>
+            </div>
+        </div>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <h2>Items List</h2>
+            <div class="list-group">
+                <button type="button" class="list-group-item item-btn" id="Swtich">Switch <span class="badge">3 </span></button>
+                <button type="button" class="list-group-item item-btn" id="Router">Router <span class="badge">6 </span></button>
+                <button type="button" class="list-group-item item-btn" id="Cables">Cables <span class="badge">8 </span></button>
+            </div>
+        </div>
+
+        <div class="col-md-9">
+            <div class="row">
+                <h2 style="float: left;">Item Models</h2>
+                <input type="text" style="float: right; margin-top:25px; padding-left:20px;" placeholder="Search" id="searchInput"/>
+                <span class="glyphicon glyphicon-plus" style="float:right; margin-top:30px; margin-right:10px;" id="add-item-to-table"></span>
+            </div>
+            <table class="table table-hover table-bordered" style="table-layout:fixed; position:relative" id="table-item-models">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr contenteditable="true">
+                        <td>Cisco 2650</td>
+                        <td>500</td>
+                    </tr>
+                    <tr contenteditable="true">
+                        <td>Cisco 3750</td>
+                        <td>300</td>
+                    </tr>
+                    <tr contenteditable="true">
+                        <td>Cisco 500</td>
+                        <td>200</td>
+                    </tr>
+                    <tr contenteditable="true">
+                        <td>Cisco 200</td>
+                        <td>1</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <p>Copyright Daniel Talor, &copy; 2017</p>
+</footer>
