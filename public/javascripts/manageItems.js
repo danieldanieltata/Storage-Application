@@ -2,9 +2,9 @@ $(document).ready(function(){
     
     // Handles the button clicks of the Items 
     $('.item-btn').click(function(){
-        // Before that should send request to backend and get the item models from the DB
-        console.log('/getItemModelsFromDB?itemTyp?itemType=' + this.id);
-        //$.get('/getItemModelsFromDB?itemTyp?itemType=' + this.id) // handel this .
+        $.get('/getItemModelsFromDB?itemType=' + this.id, function(data){
+            console.log(data);
+        }); 
 
         $('#table-item-models>tbody>tr').remove();
         $('#table-item-models').append('<h3>This is section of ' + this.id);
@@ -35,6 +35,32 @@ $(document).ready(function(){
             }
         }
 
+    });
+
+    // From here its the section that handles the Modal View('Add Item' section)
+
+    // Handles the 'Add' button 
+    $('#AddToModalTableField').click(function(){
+        fieldNameInput = $('#tableFieldName').val();
+
+        if(fieldNameInput.length == 0) return ;
+
+        itemToAdd = '<p class="list-group-item">' + fieldNameInput + '<span class="removeFieldItemFromList pull-right glyphicon glyphicon-remove" aria-hidden="true"></span></p>'
+        $('.tableFieldHolder').append(itemToAdd);
+
+    });
+
+    // Using this kind of listener because this object appends to the DOM after the page was loaded 
+    // If adding elements dynamicly ... by code ... you have to use this listener 
+    $('.tableFieldHolder').on('click', '.removeFieldItemFromList', function(){
+        this.parentNode.remove();
+    });
+
+    // Remove all when colosing 
+    $('.removeAllWhenClosingModal').click(function(){
+        $('.tableFieldHolder>p').remove();
+        $('#itemName').val('');
+        $('#tableFieldName').val('');
     });
 
 
