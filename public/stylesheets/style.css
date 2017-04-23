@@ -22,6 +22,14 @@
   display: none;
 }
 
+.modal-form-custom{
+  padding: 5px;
+}
+
+.tableFieldHolder{
+  margin-top: 10px;
+}
+
 footer{
   background:#333333;
   color:#ffffff;
