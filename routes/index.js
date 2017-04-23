@@ -16,7 +16,7 @@ router.get('/', function(req, res, next) {
 router.get('/getItemModelsFromDB', function(req, res, next){
   itemTypeQuery = req.query.itemType ;
 
-  ItemModelsSchema.find({itemType: itemTypeQuery}).then(function(documents){
+  ItemModelsSchema.find({'itemType': itemTypeQuery}).then(function(documents){
     res.send(documents);
   });
 
