@@ -48,6 +48,7 @@ $(document).ready(function(){
         itemToAdd = '<p class="list-group-item">' + fieldNameInput + '<span class="removeFieldItemFromList pull-right glyphicon glyphicon-remove" aria-hidden="true"></span></p>'
         $('.tableFieldHolder').append(itemToAdd);
 
+        $('#tableFieldName').val('');
     });
 
     // Using this kind of listener because this object appends to the DOM after the page was loaded 
@@ -58,10 +59,33 @@ $(document).ready(function(){
 
     // Remove all when colosing 
     $('.removeAllWhenClosingModal').click(function(){
+        resetAddItemModallElements();
+    });
+
+    // Handles the 'Add Item' btn 
+    $('#addItemToDB').click(function(){
+        var itemName = $('#itemName').val();
+        var tableFieldNames = [];
+
+        var tableFieldsHandler = $('.tableFieldHolder>p');
+        for(let i = 0; i < tableFieldsHandler.length ; i++){
+            tableFieldNames.push(tableFieldsHandler[i].innerText);
+        }
+        
+        if(itemName.lenth == 0 || tableFieldNames.length == 0) return false ;
+
+        // Todo, add new item to DB
+        // Todo, make a layout to add Items to table and then to DB .
+        console.log('Item name: ' + itemName + ' Item fields: ' + tableFieldNames);
+
+        resetAddItemModallElements();
+        $('#addItemModal').modal('hide')
+    });
+
+    function resetAddItemModallElements(){
         $('.tableFieldHolder>p').remove();
         $('#itemName').val('');
         $('#tableFieldName').val('');
-    });
-
+    }
 
 });
