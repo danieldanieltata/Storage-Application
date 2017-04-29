@@ -7,8 +7,8 @@ var itemModelSchema = new Schema({
     amount: {type: Number, required: true},
     itemType: {type: String, required: true},
     date: {type: Date, required: true, default: Date.now},
-    customFields: {type: Array, required: false, default: []},
+    customFieldsInputs: {type: Array, required: true}
 }, {collection: 'ItemModel'});
 
-module.exports = mongoose.model('ItemModel', itemModelSchema);
+module.exports = mongoose.model('ItemModelsModel', itemModelSchema);
 

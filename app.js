@@ -20,6 +20,12 @@ app.engine('handlebars', handlebars({extname:'handlebars', layoutsDir: __dirname
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'handlebars');
 
+// Include Jquery and Bootstrap
+app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css'));
+app.use('/fonts', express.static(__dirname + '/node_modules/bootstrap/dist/fonts'));
+app.use('/js', express.static(__dirname + '/node_modules/bootstrap/dist/js'));
+app.use('/js', express.static(__dirname + '/node_modules/jquery/dist'));
+
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));

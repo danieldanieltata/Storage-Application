@@ -1,8 +1,24 @@
+.itemModelsElement{
+  float:right; 
+  margin-top:30px; 
+  margin-right:20px;
+  padding-right: 10px;
+}
 #add-item-to-table:hover{
   cursor: pointer;
   color: lightgreen;
- }
+}
 
+#add-selected-items-to-db:hover{
+  cursor: pointer;
+  color: deepskyblue;
+}
+
+#remove-selected-items-from-db:hover{
+  cursor: pointer;
+  color: tomato;
+}
+ 
 .custom-header{
   background-color: #333333;
   color: white;
@@ -16,6 +32,14 @@
 
 .glyphicon-plus{
   color: limegreen;
+}
+
+.glyphicon-ok{
+  color: blue;
+}
+
+.glyphicon-remove{
+  color: red;
 }
 
 .hide-table-item{
