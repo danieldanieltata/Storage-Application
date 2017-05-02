@@ -2,8 +2,9 @@ $(document).ready(function(){
     
     // Handles the button clicks of the Items 
     $('.item-btn').click(function(){
+        var tableRelation = this.id ; 
 
-        $.get('/getItemModelsFromDB?itemType=' + this.id, function(data){
+        $.get('/getItemModelsFromDB?itemId=' + this.id, function(data){
             $('#table-item-models').remove();
 
             var table = $('<table class="table table-hover" style="position:relative" id="table-item-models">');
@@ -19,7 +20,7 @@ $(document).ready(function(){
             tableFieldsHead.append(tableTrElement);
 
             table.append(tableFieldsHead);
-            table.append('<tbody></tbody>');
+            table.append('<tbody id="' + tableRelation + '"></tbody>');
 
             $('#itemModelsTableDiv').append(table);
         }); 
@@ -43,13 +44,15 @@ $(document).ready(function(){
      
     // Handles the 'Add selected items to DB' when pressing the 'V' button 
     $('#add-selected-items-to-db').click(function(){
-        var selctedTablesItemsJSON = getSelctedTableItemsSelectedByCheckbox();
+        var selectedTableItemsArrayJSON = getSelctedTableItemsSelectedByCheckbox();
+        //var tableRelation = 
 
         // Here I'm sending ad diffrent type of request because I have to define that I'm using JSON 
+        if(selectedTableItemsArrayJSON.length == 0) return;
         $.ajax({
             type: 'POST',
             url: '/addOrUpdateSelectedTableItems',
-            data: JSON.stringify({'arr[]': selctedTablesItemsJSON}),
+            data: JSON.stringify({'selectedTableItemsArrayJSON[]': selectedTableItemsArrayJSON}),
             contentType:"application/json",
             dataType: 'json'
         });
@@ -57,13 +60,11 @@ $(document).ready(function(){
     });
     
     /*
-     @param itemModelsFieldsObject will hold the JSON object of the item selected
-     @param tableHeadersKeysArray will hold the JSON keys in need 
-     @param selectedItemsData will hold all the selected rows as JSON in Array
+     * @param {JSON} itemModelsFieldsObject will hold the JSON object of the item selected
+     * @param {Array} tableHeadersKeysArray will hold the JSON keys in need 
+     * @returns {Array} selectedItemsData will hold all the selected rows as JSON in Array
     */
-    function getSelctedTableItemsSelectedByCheckbox(){
-                var itemModelsFieldsObject = {};
-        
+    function getSelctedTableItemsSelectedByCheckbox(){        
         var tableHeadersKeysArray = [];
         var selectedItemsData = [];
 
@@ -77,7 +78,8 @@ $(document).ready(function(){
         // Getting the paren of the selected checkbox in order to take the field data 
         var selectedItems = $('input[name=saveThisRowListener]:checked').closest('tr').clone();
         selectedItems.each(function(index, tr){
-        
+            itemModelsFieldsObject = {};
+
             /*
              Copying the Keys Array in order to make the itemModelsFieldsObject JSON, 
              using shift to use as Queue and not Stack
@@ -87,6 +89,9 @@ $(document).ready(function(){
                 itemModelsFieldsObject[tableHeadersKeysArrayCopy.shift()] = $(td).text();
             });
             
+            // Putting id if length is bigger then 0, thats tells us that the Item exists in DB 
+            if(this.id.length > 0) itemModelsFieldsObject['id'] = this.id ;
+
             // Pushing JSON to array as copy, because of pass by reference pass by value, in this case its reference
             selectedItemsData.push(JSON.parse(JSON.stringify(itemModelsFieldsObject)));
         });

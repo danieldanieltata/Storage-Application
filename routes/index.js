@@ -34,7 +34,16 @@ router.post('/postNewItemToDB', function(req, res){
 });
 
 router.post('/addOrUpdateSelectedTableItems', function(res, req){
-    var selctedTablesItemsJSON = res.body['selctedTablesItemsJSON'] ; 
+    var selectedTablesItemsJSON = res.body['selectedTableItemsArrayJSON[]']; 
+
+    for(let i = 0 ; i < selectedTablesItemsJSON.length ; i++){
+      let selectedItem = selectedTablesItemsJSON[i] ;
+
+      if(selectedItem.id){
+         
+        }
+
+    }
 
     console.log(selctedTablesItemsJSON)
 });
@@ -42,13 +51,12 @@ router.post('/addOrUpdateSelectedTableItems', function(res, req){
 // GET from the DB all the Item Models by using query search 
 // @param req.quert.itemType is a query in the url using ?itemType=...
 router.get('/getItemModelsFromDB', function(req, res, next){
-  var responseData = {};
-  var itemTypeQuery = req.query.itemType ;
+  var itemIdQuery = req.query.itemId ;
 
-  ItemSchema.findOne({name: itemTypeQuery}, function(err, document){
-    responseData.fields = document.tableFields ;
+  ItemSchema.findById(itemIdQuery, function(err, document){
+    responseData = {'fields': document.tableFields} ;
   })
-  .then(ItemModelsSchema.find({'itemType': itemTypeQuery}, function(err, documents){
+  .then(ItemModelsSchema.find({'itemTableRelation': itemIdQuery}, function(err, documents){
       responseData.itemModels = documents ;
   }))
   .then( function(){

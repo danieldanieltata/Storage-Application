@@ -29,7 +29,7 @@
             <h2>Items List</h2>
             <div class="list-group">
                 {{# each itemsList}}
-                <button type="button" class="list-group-item item-btn" id="{{ this.name }}"> {{ this.name }} <span class="badge"> {{ this.itemModelsCount }} </span></button>
+                <button type="button" class="list-group-item item-btn" id="{{ this._id }}"> {{ this.name }} <span class="badge"> {{ this.itemModelsCount }} </span></button>
                 {{/each}}
             </div>
         </div>

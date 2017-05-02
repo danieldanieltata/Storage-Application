@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 var itemModelSchema = new Schema({
     name: {type: String, required: true},
     amount: {type: Number, required: true},
-    itemType: {type: String, required: true},
+    itemTableRelation: {type: String, required: true},
     date: {type: Date, required: true, default: Date.now},
     customFieldsInputs: {type: Array, required: true}
 }, {collection: 'ItemModel'});
