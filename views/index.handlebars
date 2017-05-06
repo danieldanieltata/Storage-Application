@@ -13,7 +13,6 @@
                     </button>
                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li><a type="button" data-toggle="modal" data-target="#addItemModal">Add Item</a></li>
-                        <li><a href="#">I took item</a></li>
                         {{!--<li><a href="#">Add User</a></li>--}}
                     </ul>
                 </div>
@@ -36,12 +35,18 @@
 
         <div class="col-md-9" id="itemModelsTableDiv">
             <div class="row">
-                <h2 style="float: left;">Item Models</h2>
-                <input type="text" style="float: right; margin-top:25px; padding-left:20px;" placeholder="Search" id="searchInput"/>
-                <span class="glyphicon glyphicon-plus itemModelsElement" id="add-item-to-table"></span>
-                <span class="glyphicon glyphicon-ok itemModelsElement" style="float:right; margin-top:30px; margin-right:10px;" id="add-selected-items-to-db"></span>
-                <span class="glyphicon glyphicon-remove itemModelsElement" style="float:right; margin-top:30px; margin-right:10px;" id="remove-selected-items-from-db"></span>
+
+                <h2 class="pull-left">Item Models</h2>
+                <span class="glyphicon glyphicon-briefcase pull-left itemModelsElement left-item-model-element" id="i-took-items" title="I took thoose items"></span>
+                
+                <input type="text" class="itemModelsElement pull-right" placeholder="Search" id="searchInput"/>
+                <span class="glyphicon glyphicon-plus itemModelsElement pull-right" id="add-item-to-table" title="Add a new item to current table"></span>
+                <span class="glyphicon glyphicon-ok itemModelsElement pull-right" id="add-selected-items-to-db" title="Submit selected items"></span>
+                <span class="glyphicon glyphicon-remove itemModelsElement pull-right" id="remove-selected-items-from-db" title="Remove selected items"></span>
             </div>
+
+            <table class="table table-hover table-bordered" style="position:relative" id="table-item-models"></table>
+
         </div>
 
     </div>
@@ -82,6 +87,34 @@
             </div>
         </div>
 
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default removeAllWhenClosingModal" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="addItemToDB">Add Item</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+{{!--I took item Modal--}}
+<div class="modal fade" tabindex="-1" role="dialog" id="iTookItemModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close removeAllWhenClosingModal" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">I Took Thoose Items</h4>
+      </div>
+      <div class="modal-body">
+        
+        <br/>
+        <div class="list-group">
+        <a href="#" class="list-group-item clearfix" style="padding:10px" >
+            <h4 class="list-group-item-heading pull-left">List group item heading</h4>
+            <p class="list-group-item-heading pull-right">...text</p>
+        </a>
+        </div>
 
       </div>
       <div class="modal-footer">

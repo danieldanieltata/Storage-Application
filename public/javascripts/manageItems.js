@@ -3,27 +3,49 @@ $(document).ready(function(){
     // Handles the button clicks of the Items 
     $('.item-btn').click(function(){
         var tableRelation = this.id ; 
+        var table = $('#table-item-models');
+        
+        var tableFieldsHead = $('<thead></thead>');
+        var tableBody = $('<tbody id="' + tableRelation + '"></tbody>');
 
-        $.get('/getItemModelsFromDB?itemId=' + this.id, function(data){
-            $('#table-item-models').remove();
+        table.empty().promise().done(function(){
+            $.get('/getItemModelsFromDB?itemId=' + tableRelation).done(function(data){
 
-            var table = $('<table class="table table-hover" style="position:relative" id="table-item-models">');
-            var tableFieldsHead = $('<thead></thead>');
-            var tableTrElement = $('<tr></tr>');
-            
-            tableTrElement.append('<th>#</th>')
+                    
+                    var tableTrElement = $('<tr></tr>');
+                    
+                    tableTrElement.append('<th>#</th>')
 
-            for(let i = 0 ; i < data.responseData.fields.length; i++){
-                tableTrElement.append('<th>' + data.responseData.fields[i] + '</th>');
-            }
-            
-            tableFieldsHead.append(tableTrElement);
+                    for(let i = 0 ; i < data.responseData.fields.length; i++){
+                        tableTrElement.append('<th>' + data.responseData.fields[i] + '</th>');
+                    }
+                    
+                    tableFieldsHead.append(tableTrElement);
+                    for(let i = 0 ; i < data.responseData.itemModels.length; i++){
+                        let tableRow  = $('<tr></tr>');
+                        let itemModel = data.responseData.itemModels[i];
+                        let itemModelKeys = Object.keys(itemModel.customFieldsInputs);
 
-            table.append(tableFieldsHead);
-            table.append('<tbody id="' + tableRelation + '"></tbody>');
+                        tableRow.attr('id', itemModel._id).promise().done(function(){
 
-            $('#itemModelsTableDiv').append(table);
-        }); 
+
+                            tableRow.append('<td class="checkbox-select-item"> <input type="checkbox" name="saveThisRowListener"/> </td>');
+                            tableRow.append('<td><div contenteditable>' + itemModel.name + '</div></td>');
+                            for(let j = 0 ; j < itemModelKeys.length; j++){
+                                tableRow.append('<td><div contenteditable>'
+                                                    + itemModel.customFieldsInputs[ itemModelKeys[j] ] + '</div></td>');
+                            }
+
+                            tableRow.append('<td><div contenteditable>' + itemModel.amount + '</div></td>');
+
+                        }).done( tableBody.append(tableRow) );
+                        
+                    }
+                    
+
+                }).done( table.append(tableFieldsHead).promise().done( table.append(tableBody) ) );
+
+        });
 
     });
 
@@ -32,10 +54,10 @@ $(document).ready(function(){
         var newItem = $('<tr></tr>') ;
         var addTableItem = $('#table-item-models>thead>tr');
 
-        newItem.append('<td> <input type="checkbox" name="saveThisRowListener"/> </td>')
+        newItem.append('<td class="checkbox-select-item"> <input type="checkbox" name="saveThisRowListener"/> </td>')
 
         for(let i = 0 ; i < addTableItem.children().length-1; i++){
-            newItem.append('<td contenteditable="true">-</td>');
+            newItem.append('<td><div contenteditable>-</div></td>');
         }
 
         $('#table-item-models>tbody').append(newItem);
@@ -45,17 +67,82 @@ $(document).ready(function(){
     // Handles the 'Add selected items to DB' when pressing the 'V' button 
     $('#add-selected-items-to-db').click(function(){
         var selectedTableItemsArrayJSON = getSelctedTableItemsSelectedByCheckbox();
-        //var tableRelation = 
+        var itemTableRelation = $('#table-item-models>tbody').attr('id');
 
         // Here I'm sending ad diffrent type of request because I have to define that I'm using JSON 
         if(selectedTableItemsArrayJSON.length == 0) return;
         $.ajax({
             type: 'POST',
             url: '/addOrUpdateSelectedTableItems',
-            data: JSON.stringify({'selectedTableItemsArrayJSON[]': selectedTableItemsArrayJSON}),
+            data: JSON.stringify({'selectedTableItemsArrayJSON[]': selectedTableItemsArrayJSON,
+                                         'itemTableRelation': itemTableRelation}),
             contentType:"application/json",
             dataType: 'json'
+        })
+
+    });
+
+    //Handles the 'Remove selected items from DB' when prssing the 'X' button
+    $('#remove-selected-items-from-db').click(function(){
+        
+        var selectedTableItemsArrayJSON = getSelctedTableItemsSelectedByCheckbox();
+        var filteredTableItemsArrayJSON = [];
+        var itemTableRelation = $('#table-item-models>tbody').attr('id');
+
+        $.when().then(function(){
+            while(selectedTableItemsArrayJSON.length > 0){
+                let possibleIditem = selectedTableItemsArrayJSON.pop() ;
+                if(possibleIditem.id) filteredTableItemsArrayJSON.push(possibleIditem);
+            }
+
+            $('input[name=saveThisRowListener]:checked').closest('tr').each(function(index, tr){
+                if(this.id.length === 0) $(this).remove();
+            });
+        }).then(function(){
+            if(filteredTableItemsArrayJSON.length === 0) return ; 
+            $.ajax({
+            type: 'POST',
+            url: '/removeSelectedTableItems',
+            data: JSON.stringify({'filteredTableItemsArrayJSON[]': filteredTableItemsArrayJSON,
+                                         'itemTableRelation': itemTableRelation}),
+            contentType:"application/json",
+            dataType: 'json'
+            })
+        
         });
+
+
+    });
+
+    $('#i-took-items').click(function(){
+        var selectedTableItemsArrayJSON = getSelctedTableItemsSelectedByCheckbox();
+        var filteredTableItemsArrayJSON = [];
+        var itemTableRelation = $('#table-item-models>tbody').attr('id');
+
+        if(selectedTableItemsArrayJSON.length === 0) return ;
+
+        $.when( promissedFilterTableItemsArrayJsonLoop() ).done(function(){
+            $('#iTookItemModal').modal('show');
+
+            $('input[name=saveThisRowListener]:checked').closest('tr').each(function(index, tr){
+                if(this.id.length === 0) $(this).remove();
+            });
+            
+        });
+        
+
+
+
+        function promissedFilterTableItemsArrayJsonLoop(){
+            var deferred = new $.Deferred();
+            while(selectedTableItemsArrayJSON.length > 0){
+                let possibleIditem = selectedTableItemsArrayJSON.pop() ;
+                if(possibleIditem.id) filteredTableItemsArrayJSON.push(possibleIditem);
+            }
+            if(selectedTableItemsArrayJSON.length === 0) deferred.resolve();
+
+            return deferred.promise();
+        }
 
     });
     
@@ -75,7 +162,7 @@ $(document).ready(function(){
             tableHeadersKeysArray.push(th.innerText);    
         });
         
-        // Getting the paren of the selected checkbox in order to take the field data 
+        // Getting the parent of the selected checkbox in order to take the field data 
         var selectedItems = $('input[name=saveThisRowListener]:checked').closest('tr').clone();
         selectedItems.each(function(index, tr){
             itemModelsFieldsObject = {};
@@ -85,7 +172,7 @@ $(document).ready(function(){
              using shift to use as Queue and not Stack
             */
             var tableHeadersKeysArrayCopy = tableHeadersKeysArray.slice();
-            $(tr).children().filter('[contenteditable=true]').each(function(index, td){
+            $(tr).children().not('.checkbox-select-item').each(function(index, td){
                 itemModelsFieldsObject[tableHeadersKeysArrayCopy.shift()] = $(td).text();
             });
             
@@ -105,8 +192,7 @@ $(document).ready(function(){
         var tableItems = $('#table-item-models>tbody>tr');
         
         for(let i = 0; i < tableItems.length; i++){
-            if(!tableItems[i].innerText.toUpperCase().includes(searchInput)){
-                console.log(tableItems[i].parentNode);
+            if(!tableItems[i].innerText.toUpperCase().match(searchInput)){
                 tableItems[i].classList.add('hide-table-item');
             }
             else{
@@ -171,7 +257,6 @@ $(document).ready(function(){
             alert('You cant input empty form !');
             return false ;
         }
-        // Todo, make a layout to add Items to table and then to DB .
 
         $.post('/postNewItemToDB', {name: itemName, tablesFields: tableFieldNames})
                 .done(function(res){
@@ -194,5 +279,6 @@ $(document).ready(function(){
         $('#itemName').val('');
         $('#tableFieldName').val('');
     }
+    
 
 });

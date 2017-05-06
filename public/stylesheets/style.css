@@ -1,9 +1,19 @@
 .itemModelsElement{
-  float:right; 
   margin-top:30px; 
   margin-right:20px;
   padding-right: 10px;
 }
+
+.left-item-model-element{
+  margin-left: 20px;
+  padding-left: 10px;
+}
+
+#i-took-items:hover{
+  cursor: pointer;
+  color: orange;
+}
+
 #add-item-to-table:hover{
   cursor: pointer;
   color: lightgreen;
@@ -40,6 +50,10 @@
 
 .glyphicon-remove{
   color: red;
+}
+
+.glyphicon-briefcase{
+  color: darkorange
 }
 
 .hide-table-item{

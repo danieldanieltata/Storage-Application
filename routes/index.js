@@ -35,29 +35,72 @@ router.post('/postNewItemToDB', function(req, res){
 
 router.post('/addOrUpdateSelectedTableItems', function(res, req){
     var selectedTablesItemsJSON = res.body['selectedTableItemsArrayJSON[]']; 
+    var itemTableRelation = res.body['itemTableRelation'];
 
     for(let i = 0 ; i < selectedTablesItemsJSON.length ; i++){
       let selectedItem = selectedTablesItemsJSON[i] ;
 
-      if(selectedItem.id){
-         
+      let modelName   = selectedItem['Model Name'];
+      let modelAmount = selectedItem['Amount'];
+
+      delete selectedItem['Model Name'];
+      delete selectedItem['Amount']; 
+
+      if(!selectedItem.id){
+          var newItemModel = new ItemModelsSchema({'name': modelName,
+                'amount': Number(modelAmount), 'itemTableRelation': itemTableRelation});
+
+          if(Object.keys(selectedItem).length > 0)
+            newItemModel['customFieldsInputs'] = selectedItem ;
+
+          newItemModel.save()
+          continue;
         }
 
-    }
+        ItemModelsSchema.findById(selectedItem.id, function(err,doc){
+            delete selectedItem.id ;
 
-    console.log(selctedTablesItemsJSON)
+            doc.name = modelName ;
+            doc.amount = modelAmount 
+            doc.itemTableRelation = itemTableRelation;
+
+            if(Object.keys(selectedItem).length > 0){
+                doc.customFieldsInputs = selectedItem
+            }
+
+            doc.save();
+        });
+
+    }
+    res.status(200);
+    return;
 });
 
+router.post('/removeSelectedTableItems', function(res, req){
+    var itemsToRemove = res.body['filteredTableItemsArrayJSON[]'];
+    var itemTableRelation = res.body['itemTableRelation'];
+ 
+    for(let i = 0 ; i < itemsToRemove.length ; i++){
+      ItemModelsSchema.remove({'_id': itemsToRemove[i].id}, function(err){
+        if(err) console.log(err);
+      });
+    }
+
+    res.status(200);
+});
+
+
 // GET from the DB all the Item Models by using query search 
-// @param req.quert.itemType is a query in the url using ?itemType=...
+// @param req.query.itemId is a query in the url using ?itemType=...
 router.get('/getItemModelsFromDB', function(req, res, next){
   var itemIdQuery = req.query.itemId ;
+  var responseData = {};
 
   ItemSchema.findById(itemIdQuery, function(err, document){
-    responseData = {'fields': document.tableFields} ;
+      responseData['fields'] = document.tableFields ;
   })
   .then(ItemModelsSchema.find({'itemTableRelation': itemIdQuery}, function(err, documents){
-      responseData.itemModels = documents ;
+      responseData['itemModels'] = documents ;
   }))
   .then( function(){
     res.status(200).send( {'responseData': responseData}); 
