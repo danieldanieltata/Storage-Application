@@ -98,13 +98,19 @@ router.get('/getItemModelsFromDB', function(req, res, next){
 
   ItemSchema.findById(itemIdQuery, function(err, document){
       responseData['fields'] = document.tableFields ;
-  })
+  }).exec()
   .then(ItemModelsSchema.find({'itemTableRelation': itemIdQuery}, function(err, documents){
       responseData['itemModels'] = documents ;
-  }))
-  .then( function(){
-    res.status(200).send( {'responseData': responseData}); 
-  });
+      if(err) console.log(err);
+      console.log('------');
+      console.log('1');
+  }).exec()
+  .then(function(){
+      console.log('2');
+      console.log('------');
+      res.status(200).send( {'responseData': responseData}); 
+  }));
+
 
 });
 
