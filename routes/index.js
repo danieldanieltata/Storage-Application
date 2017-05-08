@@ -9,11 +9,11 @@ var router = express.Router();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  var path = require('path');
-  var userName = process.env['USERPROFILE'].split(path.sep)[2];
-  var loginId = path.join("domainName",userName);
-  console.log(loginId);
-  
+  // var path = require('path');
+  // var userName = process.env['USERPROFILE'].split(path.sep)[2];
+  // var loginId = path.join("domainName",userName);
+  // console.log(loginId);
+
   // GET the Items List from the DB.
   ItemSchema.find({}).then(function(documents){
     res.render('index', {itemsList: documents});
