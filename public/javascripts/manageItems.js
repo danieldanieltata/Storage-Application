@@ -121,13 +121,34 @@ $(document).ready(function(){
 
         if(selectedTableItemsArrayJSON.length === 0) return ;
 
+        var tableFilteredBodyForModal =  $('<tbody></tbody>');
+        var tableHeading = $('#table-item-models>thead').clone();
+
+        tableHeading.find('tr').append('<th>I took</th>');
+        $($(tableHeading.children()[0]).children()[0]).remove(); // tbody --> tr --> td's
         $.when( promissedFilterTableItemsArrayJsonLoop() ).done(function(){
-            $('#iTookItemModal').modal('show');
 
             $('input[name=saveThisRowListener]:checked').closest('tr').each(function(index, tr){
-                if(this.id.length === 0) $(this).remove();
+               
+                if(tr.id.length > 0){ 
+
+                    var tableRow =  $(tr).clone();
+                    $(tableRow.children()[0]).remove()
+                    tableRow.append('<td> <input class="amount-i-took-holder" type="number" placeholder="Amount" /> </td>');
+
+                    tableFilteredBodyForModal.append( tableRow );
+                } 
+
             });
+
             
+        })
+        .done(function(){
+            $('#iTookItemModal').modal('show');
+            
+            console.log(tableHeading);
+            $('#i-took-this-item-table').append(tableHeading);
+            $('#i-took-this-item-table').append(tableFilteredBodyForModal);
         });
         
 
@@ -144,6 +165,76 @@ $(document).ready(function(){
             return deferred.promise();
         }
 
+    });
+
+    $('#update-amount-in-db').click(function(){
+
+        var itemsToUpdateArray = [];
+        $.when( prommiseCheckIfInputsAreValidNumber(status) )
+        .done(function(){
+            console.log(status);
+            if(status === false) return; 
+            $('.amount-i-took-holder').each(function(index, input){
+                let jqueryObjInput = $(input);
+                let inputParent    = jqueryObjInput.closest('tr')[0]
+
+                let item = {
+                    'inputValue'  : jqueryObjInput.val(),
+                    'parentID'    : inputParent.id
+                };
+
+                itemsToUpdateArray.push(item);  
+            });
+
+
+        })
+        .done(function(){
+            console.log(itemsToUpdateArray);
+
+            $.ajax({
+                type: 'POST',
+                url: '/updateAmountOfModels',
+                data: JSON.stringify({'itemsToUpdateArray[]': itemsToUpdateArray}),
+                contentType:"application/json",
+                dataType: 'json'
+            })
+            .done(function(){
+                return;
+            });
+
+        });
+
+
+        function prommiseCheckIfInputsAreValidNumber(){
+            $('#modal-i-took-item-body').find('div.alert-danger').remove()
+
+            var deferred = new $.Deferred();
+
+            var inputsValues =  $('.amount-i-took-holder') ;
+            var count = 0 ;
+
+            for(let i = 0 ; i < inputsValues.length ; i++){
+                inputValue = $( inputsValues[i] ).val() ;
+
+                if( inputValue.length === 0 ){
+                    let alert = '<div class="alert alert-danger alert-dismissable fade in"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>Error!</strong> Some of the amounts are incorrect.</div>'
+                    $('#modal-i-took-item-body').append(alert);
+
+                    deferred.reject('alse');
+                    return;
+                }
+
+                count++;
+            }
+
+            if(inputsValues.length === count) deferred.resolve();
+
+            return deferred.promise();
+        }
+    });
+
+    $("#iTookItemModal").on("hidden.bs.modal", function(){
+        $("#i-took-this-item-table").html("");
     });
     
     /*

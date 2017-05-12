@@ -100,26 +100,20 @@
 
 {{!--I took item Modal--}}
 <div class="modal fade" tabindex="-1" role="dialog" id="iTookItemModal">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close removeAllWhenClosingModal" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">I Took Thoose Items</h4>
       </div>
-      <div class="modal-body">
-        
-        <br/>
-        <div class="list-group">
-        <a href="#" class="list-group-item clearfix" style="padding:10px" >
-            <h4 class="list-group-item-heading pull-left">List group item heading</h4>
-            <p class="list-group-item-heading pull-right">...text</p>
-        </a>
-        </div>
+      <div class="modal-body" id="modal-i-took-item-body">
+          
+        <table id="i-took-this-item-table" class="table table-hover table-bordered" style="padding:10px"></table>
 
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default removeAllWhenClosingModal" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" id="addItemToDB">Add Item</button>
+        <button type="button" class="btn btn-default " data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="update-amount-in-db">Update</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->

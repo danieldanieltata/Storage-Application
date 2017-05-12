@@ -8,8 +8,8 @@ var handlebars = require('express-handlebars');
 
 // Connect to mongoDB 
 var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost/StorageApplicationDB');
-mongoose.connect('mongodb://danieltalor:DanielTalor@ds133231.mlab.com:33231/storage-application-db');
+mongoose.connect('mongodb://localhost/StorageApplicationDB');
+//mongoose.connect('mongodb://danieltalor:DanielTalor@ds133231.mlab.com:33231/storage-application-db');
 
 var index = require('./routes/index');
 var users = require('./routes/users');

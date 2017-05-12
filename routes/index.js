@@ -94,6 +94,14 @@ router.post('/removeSelectedTableItems', function(res, req){
 });
 
 
+//POST update amount of items
+var count = 1 ;
+router.post('/updateAmountOfModels', function(res, req){
+    count++ ;
+    var itemsToUpdateArray = res.body['itemsToUpdateArray[]'];
+    console.log(count);
+});
+
 // GET from the DB all the Item Models by using query search 
 // @param req.query.itemId is a query in the url using ?itemType=...
 router.get('/getItemModelsFromDB', function(req, res, next){
