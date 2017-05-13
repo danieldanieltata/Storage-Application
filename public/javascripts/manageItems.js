@@ -1,7 +1,14 @@
 $(document).ready(function(){
     
+    $('#redirect-to-home-page').click(function(){
+        window.location.replace('/');
+    });
+
     // Handles the button clicks of the Items 
     $('.item-btn').click(function(){
+        $('.item-btn').removeClass('active');
+        $(this).addClass('active');
+
         var tableRelation = this.id ; 
         var table = $('#table-item-models');
         
@@ -82,7 +89,7 @@ $(document).ready(function(){
 
                 if(res.done === true){
                     alert('The items have benn updated !');
-                    //window.location.replace('/');
+                    window.location.replace('/');
                 }
 
             }
@@ -244,7 +251,7 @@ $(document).ready(function(){
             @param inputValue   -> holding single input value of not valid, reject and return out from this func
 
             @return deferred.promise() -> if the deferred resolve, we can return the promise,
-            @return                    -> if ww go reject then return out from this func 
+            @return                    -> if we go reject then return out from this func 
         */
         function prommiseCheckIfInputsAreValidNumber(){
             $('#modal-i-took-item-body').find('div.alert-danger').remove()

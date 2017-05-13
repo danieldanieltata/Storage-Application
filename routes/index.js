@@ -5,9 +5,6 @@ var ItemSchema = require('../models/item.js');
 var ItemModelsSchema = require('../models/itemModels.js');
 
 var router = express.Router();
-var os = require("os");
-console.log(os.userInfo());
-
 
 
 /* GET home page. 
