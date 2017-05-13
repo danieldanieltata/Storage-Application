@@ -77,7 +77,16 @@ $(document).ready(function(){
             data: JSON.stringify({'selectedTableItemsArrayJSON[]': selectedTableItemsArrayJSON,
                                          'itemTableRelation': itemTableRelation}),
             contentType:"application/json",
-            dataType: 'json'
+            dataType: 'json',
+            success: function( res ){
+
+                if(res.done === true){
+                    alert('The items have benn updated !');
+                    //window.location.replace('/');
+                }
+
+            }
+
         })
 
     });
@@ -125,32 +134,33 @@ $(document).ready(function(){
         var tableHeading = $('#table-item-models>thead').clone();
 
         tableHeading.find('tr').append('<th>I took</th>');
-        $($(tableHeading.children()[0]).children()[0]).remove(); // tbody --> tr --> td's
-        $.when( promissedFilterTableItemsArrayJsonLoop() ).done(function(){
+        $( $(tableHeading.children()[0]).children()[0] ).remove(); // tbody --> tr --> td's
+        $.when( promissedFilterTableItemsArrayJsonLoop() )
+            .done(function(){
 
-            $('input[name=saveThisRowListener]:checked').closest('tr').each(function(index, tr){
-               
-                if(tr.id.length > 0){ 
+                $('input[name=saveThisRowListener]:checked').closest('tr').each(function(index, tr){
+                
+                    if(tr.id.length > 0){ 
 
-                    var tableRow =  $(tr).clone();
-                    $(tableRow.children()[0]).remove()
-                    tableRow.append('<td> <input class="amount-i-took-holder" type="number" placeholder="Amount" /> </td>');
+                        var tableRow =  $(tr).clone();
+                        $(tableRow.children()[0]).remove()
+                        tableRow.append('<td> <input class="amount-i-took-holder" type="number" placeholder="Amount" /> </td>');
 
-                    tableFilteredBodyForModal.append( tableRow );
-                } 
+                        tableFilteredBodyForModal.append( tableRow );
+                    } 
 
+                });
+
+                
+            })
+            .done(function(){
+                $('#iTookItemModal').modal('show');
+                
+                console.log(tableHeading);
+                $('#i-took-this-item-table').append(tableHeading);
+                $('#i-took-this-item-table').append(tableFilteredBodyForModal);
             });
-
             
-        })
-        .done(function(){
-            $('#iTookItemModal').modal('show');
-            
-            console.log(tableHeading);
-            $('#i-took-this-item-table').append(tableHeading);
-            $('#i-took-this-item-table').append(tableFilteredBodyForModal);
-        });
-        
 
 
 
@@ -167,67 +177,96 @@ $(document).ready(function(){
 
     });
 
+    /*
+        This func will check the inputs that we want to update from the 'I took item modal'
+        And then will send to backend in order to update the Amounts.
+
+        @param itemsToUpdateArray  -> holding the items that we want to update 
+        @param funcResponse.status -> holding the response of the promissed func 
+        @param inputParent         -> holding the parent of the current input element
+        @param item                -> hoding a new item that containt the value and parent ID
+    */
     $('#update-amount-in-db').click(function(){
-
         var itemsToUpdateArray = [];
-        $.when( prommiseCheckIfInputsAreValidNumber(status) )
-        .done(function(){
-            console.log(status);
-            if(status === false) return; 
-            $('.amount-i-took-holder').each(function(index, input){
-                let jqueryObjInput = $(input);
-                let inputParent    = jqueryObjInput.closest('tr')[0]
 
-                let item = {
-                    'inputValue'  : jqueryObjInput.val(),
-                    'parentID'    : inputParent.id
-                };
+        $.when( prommiseCheckIfInputsAreValidNumber() )
+            .then(function(funcResponse){
+                var deferred = $.Deferred();
 
-                itemsToUpdateArray.push(item);  
-            });
+                if(funcResponse === undefined ||funcResponse.status !== 200) deferred.reject({'done': false}); 
 
+                $('.amount-i-took-holder').each(function(index, input){
+                    let jqueryObjInput = $(input);
+                    let inputParent    = jqueryObjInput.closest('tr')[0]
 
-        })
-        .done(function(){
-            console.log(itemsToUpdateArray);
+                    let item = {
+                        'inputValue'  : jqueryObjInput.val(),
+                        'parentID'    : inputParent.id
+                    };
 
-            $.ajax({
-                type: 'POST',
-                url: '/updateAmountOfModels',
-                data: JSON.stringify({'itemsToUpdateArray[]': itemsToUpdateArray}),
-                contentType:"application/json",
-                dataType: 'json'
+                    itemsToUpdateArray.push(item);  
+                });
+                if(itemsToUpdateArray.length > 0) deferred.resolve({'done': true});
+
+                return deferred.promise();
+
             })
-            .done(function(){
-                return;
+            .then(function(statusReturn){
+                if(statusReturn.done !== true) return ;
+
+                $.ajax({
+
+                    type: 'POST',
+                    url: '/updateAmountOfModels',
+                    data: JSON.stringify({'itemsToUpdateArray[]': itemsToUpdateArray}),
+                    contentType:"application/json",
+                    dataType: 'json',
+                    success: function( res ){
+                        if(res.done === true){
+                            alert('Thank You! \n We have updated the amounts');
+                            window.location.replace('/');
+                        }
+                    },
+                    error: function( res ){
+                        if(res.responseJSON.done === false)
+                            alert(res.responseJSON.err);
+                    }
+
+                });
+
             });
 
-        });
 
+        /*  Checking if the inputs are VALID
+            @param deferred     -> holding the Jquery Deferred obj in order to make promise
+            @param inputsValues -> holding all the inputs of the 'I took items' Modal
+            @param count        -> hoding count, because we need to check when we can send reslove()
+            @param inputValue   -> holding single input value of not valid, reject and return out from this func
 
+            @return deferred.promise() -> if the deferred resolve, we can return the promise,
+            @return                    -> if ww go reject then return out from this func 
+        */
         function prommiseCheckIfInputsAreValidNumber(){
             $('#modal-i-took-item-body').find('div.alert-danger').remove()
-
             var deferred = new $.Deferred();
 
             var inputsValues =  $('.amount-i-took-holder') ;
             var count = 0 ;
 
             for(let i = 0 ; i < inputsValues.length ; i++){
-                inputValue = $( inputsValues[i] ).val() ;
+                let inputValue = $( inputsValues[i] ).val() ;
 
                 if( inputValue.length === 0 ){
                     let alert = '<div class="alert alert-danger alert-dismissable fade in"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>Error!</strong> Some of the amounts are incorrect.</div>'
                     $('#modal-i-took-item-body').append(alert);
 
-                    deferred.reject('alse');
+                    deferred.reject( {'status': 500} );
                     return;
                 }
-
                 count++;
             }
 
-            if(inputsValues.length === count) deferred.resolve();
+            if(inputsValues.length === count) deferred.resolve( {'status': 200});
 
             return deferred.promise();
         }
@@ -350,19 +389,20 @@ $(document).ready(function(){
         }
 
         $.post('/postNewItemToDB', {name: itemName, tablesFields: tableFieldNames})
-                .done(function(res){
+                .then(function(res){
                     
-                    if(res.status == 200){
-                        windows.location.replace('/');
+                    if(res.done === true){
+                        alert('The Item have been added !');
+                        window.location.replace('/');
+                        resetAddItemModallElements();
+                        $('#addItemModal').modal('hide');
                     }
                     else{
-                        alert('This item name is already in use !');
+                        alert(res.err);
                     }
 
                 });
 
-        resetAddItemModallElements();
-        $('#addItemModal').modal('hide')
     });
 
     function resetAddItemModallElements(){
