@@ -5,6 +5,7 @@ var ItemSchema = require('../models/item.js');
 var ItemModelsSchema = require('../models/itemModels.js');
 
 var router = express.Router();
+var passport = require('passport');
 
 
 /* GET home page. 
@@ -13,7 +14,7 @@ var router = express.Router();
 router.get('/', function(req, res, next) {
 
   ItemSchema.find({}).then(function(documents){
-    res.render('index', {itemsList: documents});
+    res.render('index', {itemsList: documents, user: req.user});
   });
 
 });
@@ -289,5 +290,39 @@ router.get('/getItemModelsFromDB', function(req, res, next){
 
     return;
 });
+
+
+// router.get('/login', function(req, res, next){
+
+//     res.render('login', { message: req.flash('loginMessage') });
+
+// });
+
+// router.get('/signup', function(req, res, next){
+//     res.render('signup', { message: req.flash('signupMessage') });
+// });
+
+// // process the signup form
+// router.post('/signup', passport.authenticate('local-signup', {
+//     successRedirect : '/', // redirect to the secure profile section
+//     failureRedirect : '/signup', // redirect back to the signup page if there is an error
+//     failureFlash : true // allow flash messages
+// }));
+
+// // process the login form
+// router.post('/login', passport.authenticate('local-login', {
+//     successRedirect : '/', // redirect to the secure profile section
+//     failureRedirect : '/login', // redirect back to the signup page if there is an error
+//     failureFlash : true // allow flash messages
+// }));
+
+// function isLoggedIn(req, res, next){
+
+//   if(req.isAuthenticated()){
+//     return next();;
+//   }
+//   // return true;
+//   res.redirect('/login');
+// }
 
 module.exports = router;

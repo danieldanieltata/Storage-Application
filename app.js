@@ -1,20 +1,33 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var handlebars = require('express-handlebars');
+var express       = require('express');
+var path          = require('path');
+var favicon       = require('serve-favicon');
+var logger        = require('morgan');
+var cookieParser  = require('cookie-parser');
+var bodyParser    = require('body-parser');
+var handlebars    = require('express-handlebars');
+
+// Loggin system 
+var passport      = require('passport');
+var flash         = require('connect-flash');
+var session       = require('express-session');
+require('./config/passport')(passport);
 
 // Connect to mongoDB 
-var mongoose = require('mongoose');
-//mongoose.connect('mongodb://localhost/StorageApplicationDB');
-mongoose.connect('mongodb://danieltalor:DanielTalor@ds133231.mlab.com:33231/storage-application-db');
+var mongoose      = require('mongoose');
+
+mongoose.connect('mongodb://localhost/StorageApplicationDB');
+//mongoose.connect('mongodb://danieltalor:DanielTalor@ds133231.mlab.com:33231/storage-application-db');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
 
 var app = express();
+
+
+app.use(session( { secret: 'thisislanstorageappsecret' } ));
+app.use(passport.initialize());
+app.use(passport.session()); // passport session 
+app.use(flash());
 
 // view engine setup -- set to Handlebars
 app.engine('handlebars', handlebars({extname:'handlebars', layoutsDir: __dirname + '/views/layouts/', defaultLayout: 'layout'}))
