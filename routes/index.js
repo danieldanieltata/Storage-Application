@@ -74,6 +74,8 @@ router.post('/addOrUpdateSelectedTableItems', function(req, res){
           let modelName   = selectedItem['Model Name'];
           let modelAmount = selectedItem['Amount'];
 
+          if( isNaN(Number(modelAmount)) ) continue;
+
           delete selectedItem['Model Name'];
           delete selectedItem['Amount']; 
 
@@ -245,6 +247,69 @@ router.post('/updateAmountOfModels', function(req, res){
     });
     
 });
+
+
+/*  POST removing items
+    This POST function handles the delete proccess of a complete item, controlled by the delete item modal 
+
+    @param itemIds              -> Handles the selected items that the user wants to delete 
+    @param prommisedDeleteItem  -> Handles a promise that making sure that the delete proccess is sync
+    @param itemId               -> Hold a single item ID
+    @param 
+*/
+router.post('/deleteItemFromDB', function(req, res){
+    itemIds = req.body['itemIds[]'];
+
+    if(typeof(itemIds) === 'string') itemIds = [itemIds];
+
+    var prommisedDeleteItem = new Promise(function(resolve, reject){
+
+        while(itemIds.length !== 0){
+            itemId = itemIds.pop();
+
+            ItemModelsSchema.remove( {'itemTableRelation': itemId}, function(err){
+                if(err){ 
+                    console.log(err);
+                    reject(false);
+                    return;
+                }
+
+            }).exec()
+            .then(function(){
+                
+                ItemSchema.findByIdAndRemove(itemId, function(err){
+                    if(err){ 
+                        console.log(err);
+                        reject(false);
+                        return;
+                    }
+
+                    if(itemIds.length === 0) {
+                        resolve(true);
+                        return
+                    }
+
+                }).exec()
+                
+            });
+
+            
+        }
+
+    });
+
+    prommisedDeleteItem.then(function(status){
+
+        if(status === true){
+            res.status(200).send( {"done": true } );
+        }
+        return;
+
+    });
+
+
+});
+
 
 /* GET from the DB all the Item Models by using query search
    This func will send to the frontend the Item Models data that needed.

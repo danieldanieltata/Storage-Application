@@ -163,7 +163,6 @@ $(document).ready(function(){
             .done(function(){
                 $('#iTookItemModal').modal('show');
                 
-                console.log(tableHeading);
                 $('#i-took-this-item-table').append(tableHeading);
                 $('#i-took-this-item-table').append(tableFilteredBodyForModal);
             });
@@ -417,6 +416,56 @@ $(document).ready(function(){
         $('#itemName').val('');
         $('#tableFieldName').val('');
     }
+
+    // In Modal of delete item, when clicking item
+    $('.itemsToDeleteButton').click(function(){
+        selectedItem = $(this);
+
+        if( selectedItem.hasClass('active') ){
+            selectedItem.removeClass('active');
+            return;
+        }
+
+        selectedItem.addClass('active');
+        return;
+
+    });
+
+    // In Modal of delete item, when pressing the delete button 
+    $('.deleteClickedItems').click(function(){
+        itemsClicked = $('.itemsToDelete > .itemsToDeleteButton.active')
+        itemsIds = [];
+
+        itemsClicked.each(function(index, button){
+            itemsIds.push(button.id);    
+        });
+
+        if(itemsIds.length === 0) return ;
+
+        $.ajax({
+            type: "POST",
+            url: "/deleteItemFromDB",
+            data: {"itemIds[]" : itemsIds},
+            success: function(status){
+                console.log(status);
+                if(status.done === true){
+                    alert('The item have been removed !')
+                    window.location.replace('/')
+                }
+
+            },
+            dataType: "json"
+        });
+
+    });
+
+    // In Modal of delete item, when hidden, make sure that all the button dosen't have class active
+    $("#deleteItemModal").on("hidden.bs.modal", function(){
+        $(".itemsToDeleteButton").removeClass("active");
+    });
+
+
+
     
 
 });

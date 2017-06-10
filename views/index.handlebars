@@ -2,17 +2,18 @@
     <div class="container">
         <div class="row">
             <div class="col-md-10">
-                <h1 id="redirect-to-home-page"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Ofek Lan Storage <small>Manage Your Storage</small></h1>
+                <h1 id="redirect-to-home-page"><span class="glyphicon glyphicon-send" aria-hidden="true"></span> Ofek Storage <small>Manage Your Storage</small></h1>
             </div>
             <div class="col-md-2">
 
                 <div class="dropdown create">
                      <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                        Create Content
+                        Create or Delete Items
                         <span class="caret"></span>
                     </button>
                      <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                         <li><a type="button" data-toggle="modal" data-target="#addItemModal">Add Item</a></li>
+                        <li><a type="button" data-toggle="modal" data-target="#deleteItemModal">Delete Item</a></li>
                         {{!--<li><a href="#">Add User</a></li>--}}
                     </ul>
                 </div>
@@ -57,7 +58,7 @@
 </footer>--}}
 <nav class="navbar navbar-default navbar-fixed-bottom" id="footer-nav">
   <div class="container">
-     <p>This Application made for LAN crew, by Daniel Talor</p>
+     <p>This Application made for Takshan crew, by Daniel Talor</p>
   </div>
 </nav>
 
@@ -96,6 +97,37 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default removeAllWhenClosingModal" data-dismiss="modal">Close</button>
         <button type="button" class="btn btn-primary" id="addItemToDB">Add Item</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+
+
+
+{{!--Delete Item Modal--}}
+<div class="modal fade" tabindex="-1" role="dialog" id="deleteItemModal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Delete Item</h4>
+      </div>
+      <div class="modal-body">
+        
+        <div class="list-group itemsToDelete">
+            {{# each itemsList}}
+            <button type="button" class="list-group-item itemsToDeleteButton" id="{{ this._id }}"> {{ this.name }}</button>
+            {{/each}}
+        </div>
+
+        <div class="alert alert-danger">
+            <strong>Warnning!</strong> When removing item, all the data will be removed. Including the item models
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary deleteClickedItems">Delete Item</button>
       </div>
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
