@@ -61,6 +61,10 @@ In the Storage Apllication folder we have a PM2 folder
 Install this module using npm, globaly
 
     npm install -g <pm2 folder location>
+    
+Another althernative(The first is better):
+
+         alias <NAME> <COMMAND> // pm2 node /home/danieltalor/storage/node_modules/pm2/bin/pm2
 
 Then Run out prject as service:
 
