@@ -92,3 +92,11 @@ Thats all !
 
 **I wasnt sure if we need nginx, if you need, use this link: https://www.digitalocean.com/community/tutorials/how-to-set-up-a-node-js-application-for-production-on-ubuntu-14-04**
 
+How to force npm install from cache?
+
+    npm --cache-min 9999999 install
+    
+How to uzip python?
+
+    tar xzvf file.tar.gz
+
