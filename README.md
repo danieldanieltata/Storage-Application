@@ -64,7 +64,7 @@ Install this module using npm, globaly
     
 Another althernative(The first is better):
 
-         alias <NAME> <COMMAND> // pm2 node /home/danieltalor/storage/node_modules/pm2/bin/pm2
+         alias <NAME>= "<COMMAND>" // pm2= "node /home/danieltalor/storage/node_modules/pm2/bin/pm2"
 
 Then Run out prject as service:
 
